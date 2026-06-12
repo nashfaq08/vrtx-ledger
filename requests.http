@@ -1,0 +1,79 @@
+### Seeded demo account IDs
+# USER       11111111-1111-1111-1111-111111111111  (starts with 1000.00)
+# MERCHANT   22222222-2222-2222-2222-222222222222
+# FEES       33333333-3333-3333-3333-333333333333
+# SETTLEMENT 44444444-4444-4444-4444-444444444444
+
+### Card payment: user pays merchant 100, fee auto-computed (3% => 3.00)
+POST http://localhost:8080/transactions/payment
+Content-Type: application/json
+
+{
+  "payerAccountId": "11111111-1111-1111-1111-111111111111",
+  "payeeAccountId": "22222222-2222-2222-2222-222222222222",
+  "amount": 100.00,
+  "idempotencyKey": "pay-0001",
+  "description": "POS purchase"
+}
+
+### Card payment with explicit fee
+POST http://localhost:8080/transactions/payment
+Content-Type: application/json
+
+{
+  "payerAccountId": "11111111-1111-1111-1111-111111111111",
+  "payeeAccountId": "22222222-2222-2222-2222-222222222222",
+  "amount": 50.00,
+  "fee": 1.50,
+  "idempotencyKey": "pay-0002"
+}
+
+### Refund (partial) of payment pay-0001 -> use the returned transaction id
+POST http://localhost:8080/transactions/refund
+Content-Type: application/json
+
+{
+  "originalTransactionId": "REPLACE_WITH_PAYMENT_TX_ID",
+  "amount": 40.00,
+  "idempotencyKey": "refund-0001"
+}
+
+### Wallet transfer
+POST http://localhost:8080/transactions/transfer
+Content-Type: application/json
+
+{
+  "fromAccountId": "11111111-1111-1111-1111-111111111111",
+  "toAccountId": "22222222-2222-2222-2222-222222222222",
+  "amount": 25.00,
+  "idempotencyKey": "transfer-0001"
+}
+
+### Merchant settlement (full balance when amount omitted)
+POST http://localhost:8080/transactions/settlement
+Content-Type: application/json
+
+{
+  "merchantAccountId": "22222222-2222-2222-2222-222222222222",
+  "settlementAccountId": "44444444-4444-4444-4444-444444444444",
+  "idempotencyKey": "settle-0001"
+}
+
+### Account ledger statement
+GET http://localhost:8080/accounts/11111111-1111-1111-1111-111111111111/ledger
+
+### Account balance
+GET http://localhost:8080/accounts/22222222-2222-2222-2222-222222222222
+
+### Reconciliation
+GET http://localhost:8080/reconciliation
+
+### Create a new account (e.g. EUR for multi-currency testing)
+POST http://localhost:8080/accounts
+Content-Type: application/json
+
+{
+  "name": "EU Merchant",
+  "type": "MERCHANT",
+  "currency": "EUR"
+}

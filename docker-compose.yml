@@ -1,0 +1,20 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: vrtx-ledger-db
+    environment:
+      POSTGRES_DB: vrtx_ledger
+      POSTGRES_USER: vrtx
+      POSTGRES_PASSWORD: vrtx
+    ports:
+      - "5432:5432"
+    volumes:
+      - vrtx_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U vrtx -d vrtx_ledger"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  vrtx_pgdata:
