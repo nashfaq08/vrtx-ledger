@@ -1,0 +1,46 @@
+spring:
+  application:
+    name: vrtx-ledger
+
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/vrtx_ledger}
+    username: ${DB_USER:vrtx}
+    password: ${DB_PASSWORD:vrtx}
+    hikari:
+      maximum-pool-size: 20
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+    open-in-view: false
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
+    show-sql: false
+
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    locations: classpath:db/migration
+
+server:
+  port: ${SERVER_PORT:8080}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+
+# ----  configuration ----
+ledger:
+  fees:
+    percentage: 0.03
+    fixed: 0.00
+    # Account that collects fees
+    account-id: 33333333-3333-3333-3333-333333333333
+
+logging:
+  level:
+    com.vrtx.ledger: INFO
